@@ -1,1 +1,2 @@
-{:paths ["src/main" "src/test"]}
+{:paths ["src/main" "src/test"]
+ :deps  {dev.weavejester/medley {:mvn/version "1.5.0"}}}
