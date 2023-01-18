@@ -1,6 +1,8 @@
 (ns clojure-lox.scanner
   (:require [clojure.spec.alpha :as s]
-            [clojure-lox.error :refer [error]]))
+            [clojure-lox.error :as e]))
+
+(def error (partial e/error ::error))
 
 (s/def ::token-type #{
                       ;; single-character tokens

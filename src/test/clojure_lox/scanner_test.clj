@@ -10,7 +10,7 @@
            {:token-type :left-paren, :literal nil, :lexeme "(", :line 2}
            {:token-type :identifier, :literal nil, :lexeme "bar", :line 2}
            {:token-type :eof, :literal nil, :lexeme nil, :line 2}]
-          [{:line 1, :message "invalid character @"}]]
+          [(scanner/error 1 "invalid character @")]]
          (scanner/scan-tokens "{*@>=//}foo\n)(bar")))
   (is (= [[{:token-type :string, :literal "fo\no", :lexeme "\"fo\no\"", :line 1}
            {:token-type :left-paren, :literal nil, :lexeme "(", :line 2}
@@ -23,7 +23,7 @@
           []]
          (scanner/scan-tokens "\"foo\"")))
   (is (= [[{:token-type :eof, :literal nil, :lexeme nil, :line 2}]
-          [{:line 2, :message "unterminated string"}]]
+          [(scanner/error 2 "unterminated string")]]
          (scanner/scan-tokens "\"fo\no()")))
   (is (= [[{:token-type :number, :literal 123.0, :lexeme "123", :line 1} {:token-type :eof, :literal nil, :lexeme nil, :line 1}]
           []]
