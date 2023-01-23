@@ -39,11 +39,11 @@
 (defn- unary [tokens token-index]
   (if (token-matches? #{:bang :minus}
                       (get tokens token-index))
-    (f/when-let-ok? [[right-expr new-index] (unary tokens (inc token-index))]
+    (f/when-let-ok? [right-expr-and-new-index (unary tokens (inc token-index))]
       [{:type     ::expression/unary
         :operator (get tokens token-index)
-        :right    right-expr}
-       new-index])
+        :right    (first right-expr-and-new-index)}
+       (second right-expr-and-new-index)])
     (primary tokens token-index)))
 
 (defn- binary-matcher [operator-token-types operand-fn]

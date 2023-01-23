@@ -101,4 +101,9 @@
                         {:token-type :greater-equal, :literal nil, :lexeme ">=", :line 1}
                         {:token-type :left-paren, :literal nil, :lexeme "(", :line 1}
                         {:token-type :number, :literal 4.0, :lexeme "4", :line 1}
+                        {:token-type :eof, :literal nil, :lexeme nil, :line 1}])))
+
+  (is (= (parser/error 1 "at 'abc': Expect expression")
+         (parser/parse [{:token-type :minus, :literal nil, :lexeme "-", :line 1}
+                        {:token-type :identifier, :literal nil, :lexeme "abc", :line 1}
                         {:token-type :eof, :literal nil, :lexeme nil, :line 1}]))))
