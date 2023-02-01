@@ -1,5 +1,7 @@
 (ns clojure-lox.interpreter
   (:require [clojure-lox.expression :as expr]
+            [clojure-lox.statement :as stmt]
+            [clojure-lox.environment :as environment]
             [failjure.core :as f]
             [clojure-lox.error :as e]))
 
@@ -10,7 +12,7 @@
   (error (:line token) message))
 
 (defmulti evaluate
-          "Evaluates an expression"
+          "Evaluates an expression or statement."
           :type)
 
 (defmethod evaluate ::expr/literal
@@ -62,3 +64,33 @@
 
       :bang-equal (not= left-value right-value)
       :equal-equal (= left-value right-value))))
+
+(defmethod evaluate ::stmt/expression
+  [{:keys [expression]}]
+  (evaluate expression)
+  nil)
+
+(defmethod evaluate ::stmt/print
+  [{:keys [expression]}]
+  (f/attempt-all [value (evaluate expression)]
+    (println value)))
+
+(defmethod evaluate ::stmt/var
+  [{:keys [initializer]
+    name-token :name}]
+  (f/attempt-all [value (when initializer
+                          (evaluate initializer))]
+    (do (environment/define (:lexeme name-token) value)
+        nil)))
+
+(defmethod evaluate ::expr/variable
+  [{name-token :name}]
+  (f/if-let-ok? [value (environment/get (:lexeme name-token))]
+    value
+    (runtime-error name-token
+                   (format "Undefined variable '%s'." (:lexeme name-token)))))
+
+(defn interpret [statements]
+  (e/first-failure evaluate statements))
+
+;; TODO: https://craftinginterpreters.com/statements-and-state.html#assignment

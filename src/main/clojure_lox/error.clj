@@ -9,11 +9,11 @@
 (def fail "Constructs a failure out of any map."
   map->SimpleFailure)
 
-(defn first-failure [coll]
+(defn first-failure [f coll]
   (reduce (fn [out v]
-            (if (failjure/failed? v)
-              (reduced v)
-              (conj out v)))
+            (failjure/if-let-ok? [result (f v)]
+              (conj out result)
+              (reduced result)))
           []
           coll))
 
